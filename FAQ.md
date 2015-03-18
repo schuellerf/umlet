@@ -1,0 +1,2 @@
+Your JVM (Java Virtual Machine) needs more memory to convert such a large diagram. The following line starts UMLet with 1GB memory which should be enough for every diagram:
+**javaw -Xms1024m -Xmx1024m -jar umlet.jar**
