@@ -98,13 +98,23 @@ public class Line {
 		return GeometricFunctions.getIntersectionPoints(this, rectangle);
 	}
 
-	public Line getShorterVersion(boolean fromStart, double shortenBy) {
+	public Line getShorterVersion(boolean fromStart, double shortenBy, boolean onlyArrowLength) {
 		PointDouble shortenedPoint = getPointOnLineWithDistanceFrom(fromStart, shortenBy);
 		if (fromStart) {
-			return new Line(shortenedPoint, end);
+			if (onlyArrowLength) {
+				return new Line(start, shortenedPoint);
+			}
+			else {
+				return new Line(shortenedPoint, end);
+			}
 		}
 		else {
-			return new Line(start, shortenedPoint);
+			if (onlyArrowLength) {
+				return new Line(shortenedPoint, end);
+			}
+			else {
+				return new Line(start, shortenedPoint);
+			}
 		}
 	}
 

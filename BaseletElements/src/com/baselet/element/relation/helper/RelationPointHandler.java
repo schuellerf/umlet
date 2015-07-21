@@ -141,16 +141,32 @@ public class RelationPointHandler implements ResizableObject {
 
 	// DRAW METHODS
 
-	public void drawLinesBetweenPoints(DrawHandler drawer, boolean shortFirstLine, boolean shortLastLine) {
+	public void drawLinesBetweenPoints(DrawHandler drawer, boolean shortFirstLine, boolean shortLastLine, boolean removeCenterPart) {
 		List<Line> lines = points.getRelationPointLines();
+		double shortenBy;
+		if (removeCenterPart) {
+			shortenBy = RelationDrawer.ARROW_LENGTH_EXTENDED * -1;
+		}
+		else {
+			shortenBy = RelationDrawer.SHORTEN_IF_ARROW;
+		}
 		for (int i = 0; i < lines.size(); i++) {
 			Line lineToDraw = lines.get(i);
 			if (i == 0 && shortFirstLine) {
-				lineToDraw = lineToDraw.getShorterVersion(true, RelationDrawer.SHORTEN_IF_ARROW);
+				lineToDraw = lineToDraw.getShorterVersion(true, shortenBy, removeCenterPart);
 			}
 			else if (i == lines.size() - 1 && shortLastLine) {
-				lineToDraw = lineToDraw.getShorterVersion(false, RelationDrawer.SHORTEN_IF_ARROW);
+				lineToDraw = lineToDraw.getShorterVersion(false, shortenBy, removeCenterPart);
 			}
+			else if (removeCenterPart) {
+				continue;
+			}
+			drawer.drawLine(lineToDraw);
+		}
+		/** workaround - if only one line and no center - we need an extra line */
+		if (lines.size() == 1 && removeCenterPart) {
+			Line lineToDraw = lines.get(0);
+			lineToDraw = lineToDraw.getShorterVersion(false, shortenBy, removeCenterPart);
 			drawer.drawLine(lineToDraw);
 		}
 	}

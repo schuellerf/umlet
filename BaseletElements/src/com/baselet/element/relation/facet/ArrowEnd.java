@@ -59,6 +59,12 @@ abstract class ArrowEnd implements RegexValueHolder {
 			RelationDrawer.drawArrowToLine(drawer, lineToDraw, drawOnLineStart, ArrowEndType.MEASURE, false, false);
 		}
 	};
+	static ArrowEnd LEFT_MEASURE_INVERTED = new ArrowEnd(">\\|") {
+		@Override
+		public void print(DrawHandler drawer, Line lineToDraw, boolean drawOnLineStart, String matchedText, ResizableObject resizableObject) {
+			RelationDrawer.drawArrowToLine(drawer, lineToDraw, drawOnLineStart, ArrowEndType.MEASURE, false, true);
+		}
+	};
 
 	static ArrowEnd LEFT_INVERTED = new ArrowEnd(">") {
 		@Override
@@ -123,6 +129,13 @@ abstract class ArrowEnd implements RegexValueHolder {
 		@Override
 		public void print(DrawHandler drawer, Line lineToDraw, boolean drawOnLineStart, String matchedText, ResizableObject resizableObject) {
 			RelationDrawer.drawArrowToLine(drawer, lineToDraw, drawOnLineStart, ArrowEndType.MEASURE, false, false);
+		}
+	};
+
+	static ArrowEnd RIGHT_MEASURE_INVERTED = new ArrowEnd("\\|<") {
+		@Override
+		public void print(DrawHandler drawer, Line lineToDraw, boolean drawOnLineStart, String matchedText, ResizableObject resizableObject) {
+			RelationDrawer.drawArrowToLine(drawer, lineToDraw, drawOnLineStart, ArrowEndType.MEASURE, false, true);
 		}
 	};
 

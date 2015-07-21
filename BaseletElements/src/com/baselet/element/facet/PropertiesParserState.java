@@ -26,6 +26,8 @@ public class PropertiesParserState {
 	private Buffer buffer;
 	private Dimension gridElementSize;
 	private ElementStyle elementStyle;
+	private boolean centerText; /**< center the text on a line (for inverted measure arrow) */
+
 	private StickingPolygonGenerator stickingPolygonGenerator = SimpleStickingPolygonGenerator.INSTANCE;
 	private double totalTextBlockHeight;
 	private final Map<Class<? extends Facet>, Object> facetResponse = new HashMap<Class<? extends Facet>, Object>();
@@ -50,6 +52,14 @@ public class PropertiesParserState {
 
 	public Alignment getAlignment() {
 		return alignment;
+	}
+
+	public boolean isCenterText() {
+		return centerText;
+	}
+
+	public void setCenterText(boolean centerText) {
+		this.centerText = centerText;
 	}
 
 	/**

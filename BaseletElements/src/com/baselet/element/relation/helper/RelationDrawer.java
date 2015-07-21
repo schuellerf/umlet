@@ -20,6 +20,7 @@ public class RelationDrawer {
 	static final double ARROWEND_DISPLACEMENT = 0.5; // issue 270: the arrow end is placed slightly displaced to the inside to avoid going through elemens which they point at
 
 	private static final double ARROW_LENGTH = RelationPointConstants.POINT_SELECTION_RADIUS * 1.3;
+	static final double ARROW_LENGTH_EXTENDED = ARROW_LENGTH * 1.5; // longer arrow line for measure arrows
 	private static final double DIAGONAL_CROSS_LENGTH = RelationPointConstants.POINT_SELECTION_RADIUS * 0.9;
 	private static final double BOX_SIZE = 20;
 
@@ -78,7 +79,9 @@ public class RelationDrawer {
 
 	public static void drawArrowToLine(PointDouble point, DrawHandler drawer, Line line, boolean drawOnStart, ArrowEndType arrowEndType, boolean fillBody, boolean invertArrow) {
 		if (invertArrow) {
-			point = line.getPointOnLineWithDistanceFrom(drawOnStart, ARROW_LENGTH);
+			if (arrowEndType != ArrowEndType.MEASURE) {
+				point = line.getPointOnLineWithDistanceFrom(drawOnStart, ARROW_LENGTH);
+			}
 			drawOnStart = !drawOnStart;
 		}
 		int arrowAngle = drawOnStart ? 150 : 30;

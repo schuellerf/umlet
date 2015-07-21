@@ -4,6 +4,7 @@ import com.baselet.control.basics.geom.Line;
 import com.baselet.control.basics.geom.PointDouble;
 import com.baselet.control.enums.Direction;
 import com.baselet.diagram.draw.DrawHandler;
+import com.baselet.element.facet.PropertiesParserState;
 import com.baselet.element.relation.helper.LineDescriptionEnum;
 import com.baselet.element.relation.helper.RelationPointHandler;
 
@@ -60,7 +61,7 @@ public class LineDescriptionUtils {
 		return text;
 	}
 
-	static PointDouble calcPosOfMiddleText(DrawHandler drawer, String text, Line line, int currentLineNr, double halfMiddleBlockHeight) {
+	static PointDouble calcPosOfMiddleText(PropertiesParserState state, DrawHandler drawer, String text, Line line, int currentLineNr, double halfMiddleBlockHeight) {
 		double textWidth = drawer.textWidth(text);
 		boolean horizontalLine = line.getDirectionOfLine(true).isHorizontal();
 		PointDouble center = line.getCenter();
@@ -70,9 +71,15 @@ public class LineDescriptionUtils {
 		if (horizontalLine) {
 			textX = center.getX() - textWidth / 2;
 			textY = center.getY() + previousLinesUsedSpace - LineDescriptionFacet.MIDDLE_DISTANCE_TO_LINE;
+			if (state.isCenterText()) {
+				textY += drawer.textHeight(text) / 2 + LineDescriptionFacet.MIDDLE_DISTANCE_TO_LINE / 2;
+			}
 		}
 		else {
 			textX = center.getX() + LineDescriptionFacet.X_DIST_TO_LINE;
+			if (state.isCenterText()) {
+				textX -= drawer.textWidth(text) / 2 + LineDescriptionFacet.X_DIST_TO_LINE;
+			}
 			textY = center.getY() + previousLinesUsedSpace - halfMiddleBlockHeight + drawer.textHeightMaxWithSpace(); // must use textHeightMaxWithSpace and not the height of the line to make sure the text looks good (see Issue 235)
 		}
 		return new PointDouble(textX, textY);

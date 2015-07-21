@@ -50,8 +50,8 @@ public class RelationLineTypeFacet extends FirstRunKeyValueFacet {
 	 */
 	private static final List<ArrowEnd> SHARED_ARROW_STRINGS_BEFORE = Arrays.asList(ArrowEnd.CIRCLE_CROSS, ArrowEnd.CIRCLE, ArrowEnd.DIAGONAL_CROSS);
 	private static final List<ArrowEnd> SHARED_ARROW_STRINGS_AFTER = Arrays.asList(ArrowEnd.BOX);
-	private static final List<ArrowEnd> LEFT_ARROW_STRINGS = SharedUtils.mergeLists(SHARED_ARROW_STRINGS_BEFORE, Arrays.asList(ArrowEnd.LEFT_BOX, ArrowEnd.LEFT_FILLED_DIAMOND, ArrowEnd.LEFT_DIAMOND, ArrowEnd.LEFT_FILLED_CLOSED, ArrowEnd.LEFT_CLOSED, ArrowEnd.LEFT_NORMAL, ArrowEnd.LEFT_INVERTED, ArrowEnd.LEFT_INTERFACE_OPEN, ArrowEnd.LEFT_MEASURE_NORMAL), SHARED_ARROW_STRINGS_AFTER);
-	private static final List<ArrowEnd> RIGHT_ARROW_STRINGS = SharedUtils.mergeLists(SHARED_ARROW_STRINGS_BEFORE, Arrays.asList(ArrowEnd.RIGHT_BOX, ArrowEnd.RIGHT_FILLED_DIAMOND, ArrowEnd.RIGHT_DIAMOND, ArrowEnd.RIGHT_FILLED_CLOSED, ArrowEnd.RIGHT_CLOSED, ArrowEnd.RIGHT_MEASURE_NORMAL, ArrowEnd.RIGHT_NORMAL, ArrowEnd.RIGHT_INVERTED, ArrowEnd.RIGHT_INTERFACE_OPEN), SHARED_ARROW_STRINGS_AFTER);
+	private static final List<ArrowEnd> LEFT_ARROW_STRINGS = SharedUtils.mergeLists(SHARED_ARROW_STRINGS_BEFORE, Arrays.asList(ArrowEnd.LEFT_BOX, ArrowEnd.LEFT_FILLED_DIAMOND, ArrowEnd.LEFT_DIAMOND, ArrowEnd.LEFT_FILLED_CLOSED, ArrowEnd.LEFT_CLOSED, ArrowEnd.LEFT_NORMAL, ArrowEnd.LEFT_MEASURE_INVERTED, ArrowEnd.LEFT_INVERTED, ArrowEnd.LEFT_INTERFACE_OPEN, ArrowEnd.LEFT_MEASURE_NORMAL), SHARED_ARROW_STRINGS_AFTER);
+	private static final List<ArrowEnd> RIGHT_ARROW_STRINGS = SharedUtils.mergeLists(SHARED_ARROW_STRINGS_BEFORE, Arrays.asList(ArrowEnd.RIGHT_BOX, ArrowEnd.RIGHT_FILLED_DIAMOND, ArrowEnd.RIGHT_DIAMOND, ArrowEnd.RIGHT_FILLED_CLOSED, ArrowEnd.RIGHT_CLOSED, ArrowEnd.RIGHT_MEASURE_INVERTED, ArrowEnd.RIGHT_MEASURE_NORMAL, ArrowEnd.RIGHT_NORMAL, ArrowEnd.RIGHT_INVERTED, ArrowEnd.RIGHT_INTERFACE_OPEN), SHARED_ARROW_STRINGS_AFTER);
 	private static final List<LineType> LINE_TYPES = Arrays.asList(LineType.SOLID, LineType.DOTTED, LineType.DASHED);
 
 	public RelationPointHandler getRelationPoints(PropertiesParserState state) {
@@ -93,7 +93,7 @@ public class RelationLineTypeFacet extends FirstRunKeyValueFacet {
 	}
 
 	private static void drawLineAndArrows(DrawHandler drawer, RelationPointHandler relationPoints, Match<LineType> lineType, Match<ArrowEnd> leftArrow, Match<ArrowEnd> rightArrow) {
-		drawLineBetweenPoints(drawer, relationPoints, lineType.type, leftArrow.type != null, rightArrow.type != null);
+		drawLineBetweenPoints(drawer, relationPoints, lineType.type, leftArrow.type != null, rightArrow.type != null, leftArrow.type == ArrowEnd.LEFT_MEASURE_INVERTED);
 		drawArrowEnds(drawer, relationPoints, leftArrow, rightArrow);
 		relationPoints.resizeRectAndReposPoints(); // line description and relation-endings can change the relation size, therefore recalc it now
 	}
@@ -113,10 +113,10 @@ public class RelationLineTypeFacet extends FirstRunKeyValueFacet {
 		}
 	}
 
-	private static void drawLineBetweenPoints(DrawHandler drawer, RelationPointHandler relationPoints, LineType lineType, boolean shortLeftLine, boolean shortRightLine) {
+	private static void drawLineBetweenPoints(DrawHandler drawer, RelationPointHandler relationPoints, LineType lineType, boolean shortLeftLine, boolean shortRightLine, boolean removeCenterPart) {
 		LineType oldLt = drawer.getLineType();
 		drawer.setLineType(lineType);
-		relationPoints.drawLinesBetweenPoints(drawer, shortLeftLine, shortRightLine);
+		relationPoints.drawLinesBetweenPoints(drawer, shortLeftLine, shortRightLine, removeCenterPart);
 		drawer.setLineType(oldLt);
 	}
 
@@ -170,6 +170,20 @@ public class RelationLineTypeFacet extends FirstRunKeyValueFacet {
 			}
 			log.debug("Split Relation " + value + " into following parts: " + getValueNotNull(leftArrow) + " | " + getValueNotNull(lineType) + " | " + getValueNotNull(rightArrow));
 
+			if (leftArrow.type == ArrowEnd.LEFT_MEASURE_INVERTED
+				&& rightArrow.type != ArrowEnd.RIGHT_MEASURE_INVERTED
+				||
+				rightArrow.type == ArrowEnd.RIGHT_MEASURE_INVERTED
+				&& leftArrow.type != ArrowEnd.LEFT_MEASURE_INVERTED)
+			{
+				throw new StyleException("Both \"measure\" ends have to be inverted or none");
+			}
+			if (leftArrow.type == ArrowEnd.LEFT_MEASURE_INVERTED) {
+				state.setCenterText(true);
+			}
+			else {
+				state.setCenterText(false);
+			}
 			drawLineAndArrows(state.getDrawer(), relationPoints, lineType, leftArrow, rightArrow);
 			relationPoints.resizeRectAndReposPoints(); // apply the (possible) changes now to make sure the following facets use correct coordinates
 		}
