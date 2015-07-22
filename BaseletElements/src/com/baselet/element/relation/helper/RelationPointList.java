@@ -22,6 +22,11 @@ import com.baselet.element.sticking.PointDoubleIndexed;
 public class RelationPointList {
 	List<RelationPoint> points = new ArrayList<RelationPoint>();
 	Map<Integer, Rectangle> textBoxSpaces = new HashMap<Integer, Rectangle>();
+	boolean extendedBox = false; // enlarge bounding box to fit arrows outside of first/last point
+
+	public void setExtendedBox(boolean extendedBox) {
+		this.extendedBox = extendedBox;
+	}
 
 	public void add(double x, double y) {
 		points.add(new RelationPoint(points.size(), x, y));
@@ -212,8 +217,13 @@ public class RelationPointList {
 
 	public Rectangle createRectangleContainingAllPointsAndTextSpace() {
 		Rectangle rectangleContainingAllPointsAndTextSpace = null;
+		Rectangle extendedPoint;
 		for (RelationPoint p : points) {
-			rectangleContainingAllPointsAndTextSpace = addWithNullCheck(rectangleContainingAllPointsAndTextSpace, p.getSizeAbsolute());
+			extendedPoint = p.getSizeAbsolute();
+			if (extendedBox) {
+				extendedPoint.addBorder((int) RelationDrawer.ARROW_LENGTH_EXTENDED);
+			}
+			rectangleContainingAllPointsAndTextSpace = addWithNullCheck(rectangleContainingAllPointsAndTextSpace, extendedPoint);
 		}
 		for (Rectangle textSpace : textBoxSpaces.values()) {
 			rectangleContainingAllPointsAndTextSpace = addWithNullCheck(rectangleContainingAllPointsAndTextSpace, textSpace);

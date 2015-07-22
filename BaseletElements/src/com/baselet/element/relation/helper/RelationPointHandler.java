@@ -220,4 +220,8 @@ public class RelationPointHandler implements ResizableObject {
 		return points.toString();
 	}
 
+	public void setExtendedBox(boolean extendedBox) {
+		points.setExtendedBox(extendedBox);
+	}
+
 }

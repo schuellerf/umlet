@@ -180,9 +180,11 @@ public class RelationLineTypeFacet extends FirstRunKeyValueFacet {
 			}
 			if (leftArrow.type == ArrowEnd.LEFT_MEASURE_INVERTED) {
 				state.setCenterText(true);
+				relationPoints.setExtendedBox(true);
 			}
 			else {
 				state.setCenterText(false);
+				relationPoints.setExtendedBox(false);
 			}
 			drawLineAndArrows(state.getDrawer(), relationPoints, lineType, leftArrow, rightArrow);
 			relationPoints.resizeRectAndReposPoints(); // apply the (possible) changes now to make sure the following facets use correct coordinates
