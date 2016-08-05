@@ -1,10 +1,12 @@
 package com.baselet.diagram.draw.helper;
 
 import com.baselet.control.constants.FacetConstants;
+import com.baselet.control.enums.LineMode;
 import com.baselet.control.enums.LineType;
 
 public class Style {
 	private LineType lineType;
+	private LineMode lineMode;
 	private double lineWidth;
 	private ColorOwn foregroundColor;
 	private ColorOwn backgroundColor;
@@ -15,6 +17,7 @@ public class Style {
 	public Style() {
 		lineWidth = FacetConstants.LINE_WIDTH_DEFAULT;
 		lineType = LineType.SOLID;
+		lineMode = LineMode.LINEAR;
 		applyZoom = true;
 	}
 
@@ -35,6 +38,14 @@ public class Style {
 
 	public LineType getLineType() {
 		return lineType;
+	}
+
+	public void setLineMode(LineMode lineMode) {
+		this.lineMode = lineMode;
+	}
+
+	public LineMode getLineMode() {
+		return lineMode;
 	}
 
 	public void setLineWidth(double lineWidth) {

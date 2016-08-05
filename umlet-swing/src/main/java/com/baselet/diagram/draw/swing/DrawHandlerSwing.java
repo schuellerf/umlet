@@ -97,6 +97,16 @@ public class DrawHandlerSwing extends DrawHandler {
 	}
 
 	@Override
+	public void drawArcThroughPoints(PointDouble p1, PointDouble p2, PointDouble p3) {
+		double minx = Math.min(Math.min(p1.x, p2.x), p3.x);
+		double maxx = Math.max(Math.max(p1.x, p2.x), p3.x);
+		double miny = Math.min(Math.min(p1.y, p2.y), p3.y);
+		double maxy = Math.max(Math.max(p1.y, p2.y), p3.y);
+		drawRectangle(minx, miny, maxx - minx, maxy - miny); // just a helping boundary box
+		// addShape(new Arc2D.Double(p1.x, p1.y, Math.abs(p1.x - p3.x), Math.abs(p1.y - p3.y), 10, 90, Arc2D.OPEN));
+	}
+
+	@Override
 	public void drawCircle(double x, double y, double radius) {
 		double widthAndHeight = radius * 2;
 		drawEllipse(x - radius, y - radius, widthAndHeight, widthAndHeight);

@@ -14,6 +14,7 @@ import com.baselet.control.basics.geom.Rectangle;
 import com.baselet.control.constants.FacetConstants;
 import com.baselet.control.enums.AlignHorizontal;
 import com.baselet.control.enums.FormatLabels;
+import com.baselet.control.enums.LineMode;
 import com.baselet.control.enums.LineType;
 import com.baselet.diagram.draw.helper.ColorOwn;
 import com.baselet.diagram.draw.helper.ColorOwn.Transparency;
@@ -203,6 +204,14 @@ public abstract class DrawHandler {
 		return style.getLineType();
 	}
 
+	public final void setLineMode(LineMode mode) {
+		style.setLineMode(mode);
+	}
+
+	public LineMode getLineMode() {
+		return style.getLineMode();
+	}
+
 	public final void setLineWidth(double lineWidth) {
 		assertDoubleRange(lineWidth);
 		style.setLineWidth(lineWidth);
@@ -337,6 +346,14 @@ public abstract class DrawHandler {
 	 * @param extent can be up to 360 (extend in degrees from the start parameter)
 	 */
 	public abstract void drawArc(double x, double y, double width, double height, double start, double extent, boolean open);
+
+	/** draws an arc through 3 given points
+	 * 
+	 * @param p1 Arc starts here
+	 * @param p2 Arc goes through this
+	 * @param p3 Arc stops here
+	 */
+	public abstract void drawArcThroughPoints(PointDouble p1, PointDouble p2, PointDouble p3);
 
 	public abstract void drawCircle(double x, double y, double radius);
 
