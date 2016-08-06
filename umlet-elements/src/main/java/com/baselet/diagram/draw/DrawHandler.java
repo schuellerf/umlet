@@ -348,7 +348,7 @@ public abstract class DrawHandler {
 	public abstract void drawArc(double x, double y, double width, double height, double start, double extent, boolean open);
 
 	/** draws an arc through 3 given points
-	 * 
+	 *
 	 * @param p1 Arc starts here
 	 * @param p2 Arc goes through this
 	 * @param p3 Arc stops here
