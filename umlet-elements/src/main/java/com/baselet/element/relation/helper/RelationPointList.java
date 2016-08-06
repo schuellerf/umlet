@@ -16,6 +16,7 @@ import com.baselet.control.basics.geom.GeometricFunctions;
 import com.baselet.control.basics.geom.Line;
 import com.baselet.control.basics.geom.PointDouble;
 import com.baselet.control.basics.geom.Rectangle;
+import com.baselet.control.enums.LineMode;
 import com.baselet.element.sticking.PointChange;
 import com.baselet.element.sticking.PointDoubleIndexed;
 
@@ -160,10 +161,24 @@ public class RelationPointList {
 		return Arrays.asList(points.get(0).getPoint(), points.get(points.size() - 1).getPoint());
 	}
 
-	public Rectangle getDragBox() {
-		PointDouble center = getMiddleLine().getCenter();
+	public Rectangle getDragBox(LineMode lineMode) {
+		PointDouble center = new PointDouble(0, 0); /* for false positive "may not have been initialized" */
+		Rectangle rectangle = null;
+		boolean linearFallback = true;
 		double size = RelationPointConstants.DRAG_BOX_SIZE / 2;
-		Rectangle rectangle = new Rectangle(center.x - size, center.y - size, size * 2, size * 2);
+
+		if (lineMode == LineMode.CIRCULAR) {
+			if (points.size() > 2) {
+				center = GeometricFunctions.getCircleCenter(points.get(0).getPoint(), points.get(1).getPoint(), points.get(2).getPoint());
+				linearFallback = false;
+			}
+		}
+
+		if (linearFallback) {
+			center = getMiddleLine().getCenter();
+		}
+
+		rectangle = new Rectangle(center.x - size, center.y - size, size * 2, size * 2);
 		return rectangle;
 	}
 

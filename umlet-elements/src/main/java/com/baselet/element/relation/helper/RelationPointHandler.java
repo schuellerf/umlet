@@ -31,8 +31,8 @@ public class RelationPointHandler implements ResizableObject {
 		this.points = points;
 	}
 
-	public RelationSelection getSelection(Point point) {
-		if (isPointOverDragBox(point)) {
+	public RelationSelection getSelection(Point point, LineMode lineMode) {
+		if (isPointOverDragBox(point, lineMode)) {
 			return RelationSelection.DRAG_BOX;
 		}
 		else if (RelationPointHandlerUtils.getRelationPointContaining(point, points) != null) {
@@ -49,10 +49,10 @@ public class RelationPointHandler implements ResizableObject {
 	private PointDoubleIndexed relationPointOfCurrentDrag = null;
 
 	/**
-	 * this method is basically the same as {@link #getSelection(Point)}, but also applies changes to the relationpoints
+	 * this method is basically the same as {@link #getSelection(Point, LineMode)}, but also applies changes to the relationpoints
 	 * (the order of checks is the same, but they do different things, therefore they are separated)
 	 */
-	public RelationSelection getSelectionAndMovePointsIfNecessary(Point point, Integer diffX, Integer diffY, boolean firstDrag) {
+	public RelationSelection getSelectionAndMovePointsIfNecessary(Point point, Integer diffX, Integer diffY, boolean firstDrag, LineMode lineMode) {
 		// Special case: if this is not the first drag and a relation-point is currently dragged, it has preference
 		// Necessary to avoid changing the currently moved point if moving over another point and to avoid losing the current point if it's a new line point and the mouse is dragged very fast
 		if (!firstDrag && relationPointOfCurrentDrag != null) {
@@ -61,7 +61,7 @@ public class RelationPointHandler implements ResizableObject {
 		}
 		// If the special case doesn't apply, forget the relationPointOfFirstDrag, because its a new first drag
 		relationPointOfCurrentDrag = null;
-		if (isPointOverDragBox(point)) {
+		if (isPointOverDragBox(point, lineMode)) {
 			return RelationSelection.DRAG_BOX;
 		}
 		PointDoubleIndexed pointOverRelationPoint = RelationPointHandlerUtils.getRelationPointContaining(point, points);
@@ -78,8 +78,8 @@ public class RelationPointHandler implements ResizableObject {
 		return RelationSelection.NOTHING;
 	}
 
-	private boolean isPointOverDragBox(Point point) {
-		return getDragBox().contains(point);
+	private boolean isPointOverDragBox(Point point, LineMode lineMode) {
+		return getDragBox(lineMode).contains(point);
 	}
 
 	private Line getLineContaining(Point point) {
@@ -137,8 +137,8 @@ public class RelationPointHandler implements ResizableObject {
 		return points.getStickablePoints();
 	}
 
-	public Rectangle getDragBox() {
-		return points.getDragBox();
+	public Rectangle getDragBox(LineMode lineMode) {
+		return points.getDragBox(lineMode);
 	}
 
 	// DRAW METHODS
@@ -179,11 +179,11 @@ public class RelationPointHandler implements ResizableObject {
 		}
 	}
 
-	public void drawCirclesAndDragBox(DrawHandler drawer) {
+	public void drawCirclesAndDragBox(DrawHandler drawer, LineMode lineMode) {
 		for (RelationPoint p : points.getPointHolders()) {
 			drawer.drawCircle(p.getPoint().getX(), p.getPoint().getY(), RelationPointConstants.POINT_SELECTION_RADIUS);
 		}
-		drawer.drawRectangle(getDragBox());
+		drawer.drawRectangle(getDragBox(lineMode));
 	}
 
 	public String toAdditionalAttributesString() {

@@ -114,4 +114,44 @@ public class GeometricFunctions {
 		}
 		return returnList;
 	}
+
+	/**
+	 * @param a one point on the circle
+	 * @param b yet another point on the circle
+	 * @param c third point on the circle
+	 * @return center of the circle through those three points
+	 */
+	public static PointDouble getCircleCenter(PointDouble a, PointDouble b, PointDouble c) {
+		double alpha;
+		double beta;
+		alpha = ((a.x * a.x + a.y * a.y - c.x * c.x - c.y * c.y) * (b.y - a.y) - (a.x * a.x + a.y * a.y - b.x * b.x - b.y * b.y) * (c.y - a.y))
+				/ (2 * ((b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y)));
+
+		beta = ((a.x * a.x + a.y * a.y - c.x * c.x - c.y * c.y) * (b.x - a.x) - (a.x * a.x + a.y * a.y - b.x * b.x - b.y * b.y) * (c.x - a.x))
+				/ (2 * ((b.y - a.y) * (c.x - a.x) - (c.y - a.y) * (b.x - a.x)));
+
+		return new PointDouble(alpha, beta);
+	}
+
+	/**
+	 * @param line a line with some angle to the y-axis :)
+	 * @return the angle of the line in degrees 
+	 */
+	public static double getAngle(Line line) {
+		double xDiff = line.getEnd().x - line.getStart().x;
+		if (xDiff == 0) {
+			return 0;
+		}
+		double yDiff = line.getEnd().y - line.getStart().y;
+
+		double angle;
+		if (xDiff > 0) {
+			angle = 180 - Math.toDegrees(Math.atan(yDiff / xDiff));
+		}
+		else {
+			angle = 360 - Math.toDegrees(Math.atan(yDiff / xDiff));
+		}
+
+		return angle;
+	}
 }

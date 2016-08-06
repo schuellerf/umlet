@@ -25,6 +25,7 @@ public class Style {
 		Style clone = new Style();
 		clone.lineWidth = lineWidth;
 		clone.lineType = lineType;
+		clone.lineMode = lineMode;
 		clone.foregroundColor = foregroundColor;
 		clone.backgroundColor = backgroundColor;
 		clone.fontSize = fontSize;

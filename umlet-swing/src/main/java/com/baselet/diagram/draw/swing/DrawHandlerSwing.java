@@ -9,9 +9,14 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.RoundRectangle2D;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.baselet.control.StringStyle;
 import com.baselet.control.basics.Converter;
 import com.baselet.control.basics.geom.DimensionDouble;
+import com.baselet.control.basics.geom.GeometricFunctions;
+import com.baselet.control.basics.geom.Line;
 import com.baselet.control.basics.geom.PointDouble;
 import com.baselet.control.constants.Constants;
 import com.baselet.control.enums.AlignHorizontal;
@@ -24,6 +29,8 @@ import com.baselet.diagram.draw.helper.Style;
 import com.baselet.element.interfaces.GridElement;
 
 public class DrawHandlerSwing extends DrawHandler {
+
+	private static final Logger log = LoggerFactory.getLogger(DrawHandlerSwing.class);
 
 	private Graphics2D g2;
 
@@ -98,18 +105,24 @@ public class DrawHandlerSwing extends DrawHandler {
 
 	@Override
 	public void drawArcThroughPoints(PointDouble a, PointDouble b, PointDouble c) {
+		PointDouble center = GeometricFunctions.getCircleCenter(a, b, c);
+		double radius = new Line(a, center).getLength();
+		double startAngle = GeometricFunctions.getAngle(new Line(a, center));
+		double middleAngle = GeometricFunctions.getAngle(new Line(b, center));
+		double endAngle = GeometricFunctions.getAngle(new Line(c, center));
 
-		double alpha;
-		double beta;
-		alpha = ((a.x * a.x + a.y * a.y - c.x * c.x - c.y * c.y) * (b.y - a.y) - (a.x * a.x + a.y * a.y - b.x * b.x - b.y * b.y) * (c.y - a.y))
-				/ (2 * ((b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y)));
+		if (middleAngle > endAngle && middleAngle < startAngle
+			|| middleAngle < endAngle && middleAngle < startAngle && startAngle < endAngle && middleAngle != 0
+			|| middleAngle > endAngle && middleAngle > startAngle && startAngle < endAngle) {
+			double tmp = startAngle;
+			startAngle = endAngle;
+			endAngle = tmp;
+		}
+		if (startAngle > endAngle) {
+			startAngle -= 360;
+		}
 
-		beta = ((a.x * a.x + a.y * a.y - c.x * c.x - c.y * c.y) * (b.x - a.x) - (a.x * a.x + a.y * a.y - b.x * b.x - b.y * b.y) * (c.x - a.x))
-				/ (2 * ((b.y - a.y) * (c.x - a.x) - (c.y - a.y) * (b.x - a.x)));
-
-		double radius = Math.sqrt(Math.pow(a.x - alpha, 2) + Math.pow(a.y - beta, 2));
-		addShape(new Ellipse2D.Double(alpha - radius, beta - radius, radius * 2, radius * 2));
-
+		addShape(new Arc2D.Double(center.x - radius, center.y - radius, radius * 2, radius * 2, startAngle, endAngle - startAngle, Arc2D.OPEN));
 	}
 
 	@Override

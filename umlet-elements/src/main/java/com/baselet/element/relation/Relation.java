@@ -61,7 +61,7 @@ public class Relation extends NewGridElement implements Stickable, RelationPoint
 		}
 
 		drawer.setForegroundColor(ColorOwn.SELECTION_FG);
-		relationPoints.drawCirclesAndDragBox(drawer);
+		relationPoints.drawCirclesAndDragBox(drawer, state.getDrawer().getLineMode());
 	}
 
 	@Override
@@ -87,7 +87,7 @@ public class Relation extends NewGridElement implements Stickable, RelationPoint
 	public void drag(Collection<Direction> resizeDirection, int diffX, int diffY, Point mousePosBeforeDragRelative, boolean isShiftKeyDown, boolean firstDrag, StickableMap stickables, boolean undoable) {
 		String oldAddAttr = getAdditionalAttributes();
 		Rectangle oldRect = getRectangle();
-		RelationSelection returnSelection = relationPoints.getSelectionAndMovePointsIfNecessary(pointAtDefaultZoom(mousePosBeforeDragRelative), toDefaultZoom(diffX), toDefaultZoom(diffY), firstDrag);
+		RelationSelection returnSelection = relationPoints.getSelectionAndMovePointsIfNecessary(pointAtDefaultZoom(mousePosBeforeDragRelative), toDefaultZoom(diffX), toDefaultZoom(diffY), firstDrag, state.getDrawer().getLineMode());
 		if (returnSelection == RelationSelection.DRAG_BOX) {
 			setLocationDifference(diffX, diffY);
 		}
@@ -126,7 +126,7 @@ public class Relation extends NewGridElement implements Stickable, RelationPoint
 	@Override
 	public boolean isSelectableOn(Point point) {
 		Point relativePoint = toRelative(point);
-		boolean isSelectableOn = relationPoints.getSelection(pointAtDefaultZoom(relativePoint)) != RelationSelection.NOTHING;
+		boolean isSelectableOn = relationPoints.getSelection(pointAtDefaultZoom(relativePoint), state.getDrawer().getLineMode()) != RelationSelection.NOTHING;
 		return isSelectableOn;
 	}
 
@@ -169,7 +169,7 @@ public class Relation extends NewGridElement implements Stickable, RelationPoint
 
 	@Override
 	public CursorOwn getCursor(Point point, Set<Direction> resizeDirections) {
-		RelationSelection selection = relationPoints.getSelection(pointAtDefaultZoom(toRelative(point)));
+		RelationSelection selection = relationPoints.getSelection(pointAtDefaultZoom(toRelative(point)), state.getDrawer().getLineMode());
 		switch (selection) {
 			case DRAG_BOX:
 				return CursorOwn.MOVE;
