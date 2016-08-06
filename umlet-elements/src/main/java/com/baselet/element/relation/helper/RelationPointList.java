@@ -218,6 +218,12 @@ public class RelationPointList {
 		for (Rectangle textSpace : textBoxSpaces.values()) {
 			rectangleContainingAllPointsAndTextSpace = Rectangle.mergeToLeft(rectangleContainingAllPointsAndTextSpace, textSpace);
 		}
+		if (rectangleContainingAllPointsAndTextSpace != null) {
+			rectangleContainingAllPointsAndTextSpace.height += 200;
+			rectangleContainingAllPointsAndTextSpace.width += 200;
+			rectangleContainingAllPointsAndTextSpace.x -= 100;
+			rectangleContainingAllPointsAndTextSpace.y -= 100;
+		}
 		return rectangleContainingAllPointsAndTextSpace;
 	}
 }

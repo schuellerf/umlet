@@ -98,11 +98,6 @@ public class DrawHandlerSwing extends DrawHandler {
 
 	@Override
 	public void drawArcThroughPoints(PointDouble a, PointDouble b, PointDouble c) {
-		double minx = Math.min(Math.min(a.x, b.x), c.x);
-		double maxx = Math.max(Math.max(a.x, b.x), c.x);
-		double miny = Math.min(Math.min(a.y, b.y), c.y);
-		double maxy = Math.max(Math.max(a.y, b.y), c.y);
-		// drawRectangle(minx, miny, maxx - minx, maxy - miny); // just a helping boundary box
 
 		double alpha;
 		double beta;
@@ -113,10 +108,8 @@ public class DrawHandlerSwing extends DrawHandler {
 				/ (2 * ((b.y - a.y) * (c.x - a.x) - (c.y - a.y) * (b.x - a.x)));
 
 		double radius = Math.sqrt(Math.pow(a.x - alpha, 2) + Math.pow(a.y - beta, 2));
-		/* double ma = (p2.y - p1.y) / (p2.x - p1.x); double mb = (p3.y - p2.y) / (p3.x - p2.x); centerX = (ma * mb * (p1.y - p3.y) + mb * (p1.x - p2.x) - ma * (p2.x + p3.x)) / (2 * (mb - ma)); centerY = -1 / ma * (centerX - (p1.x + p2.x) / 2) + (p1.y + p2.y) / 2; drawRectangle(centerX, centerY, 1, 1); double radius = Math.sqrt(Math.pow(Math.abs(p1.x - centerX), 2) + Math.pow(Math.abs(p1.y - centerY), 2)); */
-		drawCircle(alpha, beta, radius);
-		// Circle2D.Double()
-		// addShape(new Arc2D.Double(p1.x, p1.y, Math.abs(p1.x - p3.x), Math.abs(p1.y - p3.y), 10, 90, Arc2D.OPEN));
+		addShape(new Ellipse2D.Double(alpha - radius, beta - radius, radius * 2, radius * 2));
+
 	}
 
 	@Override

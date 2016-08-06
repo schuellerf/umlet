@@ -13,6 +13,7 @@ import com.baselet.control.basics.geom.Point;
 import com.baselet.control.basics.geom.Rectangle;
 import com.baselet.control.enums.LineMode;
 import com.baselet.diagram.draw.DrawHandler;
+import com.baselet.diagram.draw.helper.StyleException;
 import com.baselet.element.sticking.PointChange;
 import com.baselet.element.sticking.PointDoubleIndexed;
 
@@ -144,13 +145,23 @@ public class RelationPointHandler implements ResizableObject {
 
 	public void drawLinesBetweenPoints(DrawHandler drawer, boolean shortFirstLine, boolean shortLastLine) {
 		List<Line> lines = points.getRelationPointLines();
-		if (drawer.getLineMode() == LineMode.CIRCULAR && lines.size() > 0 && lines.size() % 2 == 0) {
-			for (int i = 0; i < lines.size(); i += 2) {
-				drawer.drawArcThroughPoints(lines.get(i).getStart(), lines.get(i).getEnd(), lines.get(i + 1).getEnd());
+		boolean linear = false;
+		boolean finalCircuarException = false;
+		if (drawer.getLineMode() == LineMode.CIRCULAR) {
+			if (lines.size() == 0 || lines.size() % 2 != 0) {
+				linear = true;
+				finalCircuarException = true;
+			}
+			else {
+				for (int i = 0; i < lines.size(); i += 2) {
+					drawer.drawArcThroughPoints(lines.get(i).getStart(), lines.get(i).getEnd(), lines.get(i + 1).getEnd());
+				}
 			}
 		}
 		else {
-			// just draw linear
+			linear = true;
+		}
+		if (linear) {
 			for (int i = 0; i < lines.size(); i++) {
 				Line lineToDraw = lines.get(i);
 				if (i == 0 && shortFirstLine) {
@@ -161,6 +172,10 @@ public class RelationPointHandler implements ResizableObject {
 				}
 				drawer.drawLine(lineToDraw);
 			}
+		}
+
+		if (finalCircuarException) {
+			throw new StyleException("Circular linemode needs a multiple of 2 lines (not " + lines.size() + ")");
 		}
 	}
 
