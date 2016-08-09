@@ -86,8 +86,8 @@ public class RelationPointList {
 		}
 	}
 
-	void moveRelationPointsAndTextSpacesByToUpperLeftCorner() {
-		Rectangle rect = createRectangleContainingAllPointsAndTextSpace();
+	void moveRelationPointsAndTextSpacesByToUpperLeftCorner(LineMode lineMode) {
+		Rectangle rect = createRectangleContainingAllPointsAndTextSpace(lineMode);
 		int displacementX = SharedUtils.realignToGrid(false, rect.getX(), false);
 		int displacementY = SharedUtils.realignToGrid(false, rect.getY(), false);
 		moveRelationPointsAndTextSpacesBy(-displacementX, -displacementY);
@@ -225,19 +225,22 @@ public class RelationPointList {
 		return textBoxSpaces.keySet();
 	}
 
-	public Rectangle createRectangleContainingAllPointsAndTextSpace() {
+	public Rectangle createRectangleContainingAllPointsAndTextSpace(LineMode lineMode) {
 		Rectangle rectangleContainingAllPointsAndTextSpace = null;
-		for (RelationPoint p : points) {
-			rectangleContainingAllPointsAndTextSpace = Rectangle.mergeToLeft(rectangleContainingAllPointsAndTextSpace, p.getSizeAbsolute());
+		if (lineMode == LineMode.LINEAR || (points.size() - 1) % 2 != 0) {
+			for (RelationPoint p : points) {
+				rectangleContainingAllPointsAndTextSpace = Rectangle.mergeToLeft(rectangleContainingAllPointsAndTextSpace, p.getSizeAbsolute());
+			}
+		}
+		else {
+			for (int i = 0; i < points.size() - 2; i += 2) {
+				PointDouble center = GeometricFunctions.getCircleCenter(points.get(i).getPoint(), points.get(i + 1).getPoint(), points.get(i + 2).getPoint());
+				double radius = new Line(points.get(i).getPoint(), center).getLength();
+				rectangleContainingAllPointsAndTextSpace = Rectangle.mergeToLeft(rectangleContainingAllPointsAndTextSpace, new Rectangle(center.x - radius - RelationPointConstants.POINT_SELECTION_RADIUS, center.y - radius - RelationPointConstants.POINT_SELECTION_RADIUS, (radius + RelationPointConstants.POINT_SELECTION_RADIUS) * 2, (radius + RelationPointConstants.POINT_SELECTION_RADIUS) * 2));
+			}
 		}
 		for (Rectangle textSpace : textBoxSpaces.values()) {
 			rectangleContainingAllPointsAndTextSpace = Rectangle.mergeToLeft(rectangleContainingAllPointsAndTextSpace, textSpace);
-		}
-		if (rectangleContainingAllPointsAndTextSpace != null) {
-			rectangleContainingAllPointsAndTextSpace.height += 200;
-			rectangleContainingAllPointsAndTextSpace.width += 200;
-			rectangleContainingAllPointsAndTextSpace.x -= 100;
-			rectangleContainingAllPointsAndTextSpace.y -= 100;
 		}
 		return rectangleContainingAllPointsAndTextSpace;
 	}

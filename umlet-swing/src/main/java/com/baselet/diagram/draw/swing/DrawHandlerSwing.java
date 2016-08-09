@@ -105,6 +105,10 @@ public class DrawHandlerSwing extends DrawHandler {
 
 	@Override
 	public void drawArcThroughPoints(PointDouble a, PointDouble b, PointDouble c) {
+		a = a.getZoomed(getZoom());
+		b = b.getZoomed(getZoom());
+		c = c.getZoomed(getZoom());
+
 		PointDouble center = GeometricFunctions.getCircleCenter(a, b, c);
 		double radius = new Line(a, center).getLength();
 		double startAngle = GeometricFunctions.getAngle(new Line(a, center));

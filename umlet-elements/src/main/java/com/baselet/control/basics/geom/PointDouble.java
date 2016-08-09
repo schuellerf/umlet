@@ -6,6 +6,9 @@ package com.baselet.control.basics.geom;
  */
 public class PointDouble {
 
+	// move to some common location?
+	protected static final double HALF_PX = 0.5f;
+
 	public final Double x;
 	public final Double y;
 
@@ -21,6 +24,10 @@ public class PointDouble {
 
 	public Double getY() {
 		return y;
+	}
+
+	public PointDouble getZoomed(double zoomValue) {
+		return new PointDouble(x * zoomValue + HALF_PX, y * zoomValue + HALF_PX);
 	}
 
 	public double distance(PointDouble o) {

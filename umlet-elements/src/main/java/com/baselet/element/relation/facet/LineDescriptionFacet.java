@@ -87,7 +87,7 @@ public class LineDescriptionFacet extends FirstRunFacet {
 
 		// all unused textboxes must be reset to default size (to make sure the relation size is correct even if LineDescriptionFacet is never called)
 		relationPoints.resetTextBoxIndexesExcept(usedIndexes);
-		relationPoints.resizeRectAndReposPoints(); // apply the (possible) changes now to make sure the following facets use correct coordinates
+		relationPoints.resizeRectAndReposPoints(drawer.getLineMode()); // apply the (possible) changes now to make sure the following facets use correct coordinates
 	}
 
 	private void printMiddleDescription(RelationPointHandler relationPoints, DrawHandler drawer, Set<Integer> usedIndexes, List<String> middleLines) {

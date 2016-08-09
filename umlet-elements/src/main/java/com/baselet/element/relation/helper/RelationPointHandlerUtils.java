@@ -5,13 +5,14 @@ import com.baselet.control.basics.geom.Point;
 import com.baselet.control.basics.geom.PointDouble;
 import com.baselet.control.basics.geom.Rectangle;
 import com.baselet.control.constants.SharedConstants;
+import com.baselet.control.enums.LineMode;
 import com.baselet.element.sticking.PointDoubleIndexed;
 
 public class RelationPointHandlerUtils {
 
-	static Rectangle calculateRelationRectangleBasedOnPoints(PointDouble upperLeftCorner, int gridSize, RelationPointList relationPoints) {
+	static Rectangle calculateRelationRectangleBasedOnPoints(PointDouble upperLeftCorner, int gridSize, RelationPointList relationPoints, LineMode lineMode) {
 		// Calculate new Relation position and size
-		Rectangle newSize = relationPoints.createRectangleContainingAllPointsAndTextSpace();
+		Rectangle newSize = relationPoints.createRectangleContainingAllPointsAndTextSpace(lineMode);
 		if (newSize == null) {
 			throw new RuntimeException("This relation has no points: " + relationPoints);
 		}

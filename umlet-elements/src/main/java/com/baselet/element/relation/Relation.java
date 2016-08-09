@@ -74,7 +74,7 @@ public class Relation extends NewGridElement implements Stickable, RelationPoint
 		}
 		relationPoints = new RelationPointHandler(this, pointList);
 		if (getHandler().isInitialized()) {
-			relationPoints.resizeRectAndReposPoints();
+			relationPoints.resizeRectAndReposPoints(state.getDrawer().getLineMode());
 		}
 	}
 
@@ -137,7 +137,7 @@ public class Relation extends NewGridElement implements Stickable, RelationPoint
 
 	@Override
 	public List<PointDoubleIndexed> movePoints(List<PointChange> changedStickPoints) {
-		List<PointDoubleIndexed> updatedChangedList = relationPoints.movePointAndResizeRectangle(changedStickPoints);
+		List<PointDoubleIndexed> updatedChangedList = relationPoints.movePointAndResizeRectangle(changedStickPoints, state.getDrawer().getLineMode());
 		updateModelFromText();
 		return updatedChangedList;
 	}

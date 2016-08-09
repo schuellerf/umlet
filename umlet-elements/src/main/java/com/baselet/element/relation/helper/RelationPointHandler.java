@@ -56,7 +56,7 @@ public class RelationPointHandler implements ResizableObject {
 		// Special case: if this is not the first drag and a relation-point is currently dragged, it has preference
 		// Necessary to avoid changing the currently moved point if moving over another point and to avoid losing the current point if it's a new line point and the mouse is dragged very fast
 		if (!firstDrag && relationPointOfCurrentDrag != null) {
-			relationPointOfCurrentDrag = movePointAndResizeRectangle(relationPointOfCurrentDrag, diffX, diffY);
+			relationPointOfCurrentDrag = movePointAndResizeRectangle(relationPointOfCurrentDrag, diffX, diffY, lineMode);
 			return RelationSelection.RELATION_POINT;
 		}
 		// If the special case doesn't apply, forget the relationPointOfFirstDrag, because its a new first drag
@@ -66,13 +66,13 @@ public class RelationPointHandler implements ResizableObject {
 		}
 		PointDoubleIndexed pointOverRelationPoint = RelationPointHandlerUtils.getRelationPointContaining(point, points);
 		if (pointOverRelationPoint != null) {
-			relationPointOfCurrentDrag = movePointAndResizeRectangle(pointOverRelationPoint, diffX, diffY);
+			relationPointOfCurrentDrag = movePointAndResizeRectangle(pointOverRelationPoint, diffX, diffY, lineMode);
 			return RelationSelection.RELATION_POINT;
 		}
 		Line lineOnPoint = getLineContaining(point);
 		if (lineOnPoint != null) {
 			relationPointOfCurrentDrag = points.addPointOnLine(lineOnPoint, SharedUtils.realignToGridRoundToNearest(false, point.x), SharedUtils.realignToGridRoundToNearest(false, point.y));
-			relationPointOfCurrentDrag = movePointAndResizeRectangle(relationPointOfCurrentDrag, diffX, diffY);
+			relationPointOfCurrentDrag = movePointAndResizeRectangle(relationPointOfCurrentDrag, diffX, diffY, lineMode);
 			return RelationSelection.LINE;
 		}
 		return RelationSelection.NOTHING;
@@ -92,9 +92,9 @@ public class RelationPointHandler implements ResizableObject {
 		return null;
 	}
 
-	public List<PointDoubleIndexed> movePointAndResizeRectangle(List<PointChange> changedPoints) {
+	public List<PointDoubleIndexed> movePointAndResizeRectangle(List<PointChange> changedPoints, LineMode lineMode) {
 		points.applyChangesToPoints(changedPoints);
-		resizeRectAndReposPoints();
+		resizeRectAndReposPoints(lineMode);
 		List<PointDoubleIndexed> updatedChangedPoint = new ArrayList<PointDoubleIndexed>();
 		for (PointChange c : changedPoints) {
 			updatedChangedPoint.add(points.get(c.getIndex()));
@@ -102,17 +102,17 @@ public class RelationPointHandler implements ResizableObject {
 		return updatedChangedPoint;
 	}
 
-	private PointDoubleIndexed movePointAndResizeRectangle(PointDoubleIndexed point, Integer diffX, Integer diffY) {
-		return movePointAndResizeRectangle(Arrays.asList(new PointChange(point.getIndex(), diffX, diffY))).get(0);
+	private PointDoubleIndexed movePointAndResizeRectangle(PointDoubleIndexed point, Integer diffX, Integer diffY, LineMode lineMode) {
+		return movePointAndResizeRectangle(Arrays.asList(new PointChange(point.getIndex(), diffX, diffY)), lineMode).get(0);
 	}
 
-	public void resizeRectAndReposPoints() {
+	public void resizeRectAndReposPoints(LineMode lineMode) {
 		// now rebuild width and height of the relation, based on the new positions of the relation-points
-		Rectangle newRect = RelationPointHandlerUtils.calculateRelationRectangleBasedOnPoints(relation.getRectangle().getUpperLeftCorner(), relation.getGridSize(), points);
+		Rectangle newRect = RelationPointHandlerUtils.calculateRelationRectangleBasedOnPoints(relation.getRectangle().getUpperLeftCorner(), relation.getGridSize(), points, lineMode);
 		relation.setRectangle(newRect);
 
 		// move relation points to their new position (their position is relative to the relation-position)
-		points.moveRelationPointsAndTextSpacesByToUpperLeftCorner();
+		points.moveRelationPointsAndTextSpacesByToUpperLeftCorner(lineMode);
 	}
 
 	public boolean removeRelationPointIfOnLineBetweenNeighbourPoints() {

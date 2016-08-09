@@ -96,7 +96,7 @@ public class RelationLineTypeFacet extends FirstRunKeyValueFacet {
 	private static void drawLineAndArrows(DrawHandler drawer, RelationPointHandler relationPoints, Match<LineType> lineType, Match<ArrowEnd> leftArrow, Match<ArrowEnd> rightArrow) {
 		drawLineBetweenPoints(drawer, relationPoints, lineType.type, leftArrow.type != null, rightArrow.type != null);
 		drawArrowEnds(drawer, relationPoints, leftArrow, rightArrow);
-		relationPoints.resizeRectAndReposPoints(); // line description and relation-endings can change the relation size, therefore recalc it now
+		relationPoints.resizeRectAndReposPoints(drawer.getLineMode()); // line description and relation-endings can change the relation size, therefore recalc it now
 	}
 
 	private static void drawArrowEnds(DrawHandler drawer, RelationPointHandler relationPoints, Match<ArrowEnd> leftArrow, Match<ArrowEnd> rightArrow) {
@@ -172,7 +172,7 @@ public class RelationLineTypeFacet extends FirstRunKeyValueFacet {
 			log.debug("Split Relation " + value + " into following parts: " + getValueNotNull(leftArrow) + " | " + getValueNotNull(lineType) + " | " + getValueNotNull(rightArrow));
 
 			drawLineAndArrows(state.getDrawer(), relationPoints, lineType, leftArrow, rightArrow);
-			relationPoints.resizeRectAndReposPoints(); // apply the (possible) changes now to make sure the following facets use correct coordinates
+			relationPoints.resizeRectAndReposPoints(state.getDrawer().getLineMode()); // apply the (possible) changes now to make sure the following facets use correct coordinates
 		}
 		else {
 			throw new StyleException("Only one lineType allowed");
